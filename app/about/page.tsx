@@ -30,7 +30,7 @@ export default function AboutPage() {
 
             <div className="max-w-none">
               <p className="text-stone-600 leading-relaxed text-[15px] mb-8">
-                <strong className="text-stone-800">Gia Phả chi họ Phạm - Thanh Giang </strong> .
+                <strong className="text-stone-800">Gia Phả chi họ VŨ - HẢI PHÒNG </strong> .
               </p>
 
               <div className="mt-8 mb-4 border-t border-stone-100 pt-8 flex items-center gap-3">
