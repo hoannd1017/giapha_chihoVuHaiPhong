@@ -74,8 +74,7 @@ export default function AboutPage() {
                     <strong className="text-stone-800"> </strong>{" "}
                     {" "}
                     <code className="bg-white border border-stone-200 px-1 py-0.5 rounded text-[13px] text-amber-700">
-                      Chi họ Phạm Văn - Thôn Đan Giáp - Xã Thanh Giang - Huyện Thanh Miện - Tỉnh Hải Dương.
-                      (Ngày nay thuộc Xã Nam Thanh Miện - TP Hải Phòng)
+                      Chi họ VŨ - THƯỢNG LÝ - XI MĂNG - TP Hải Phòng)
                     </code>{" "}
 
                   </li>
@@ -97,7 +96,7 @@ export default function AboutPage() {
                   href="mailto:tvsammedia@gmail.com"
                   className="font-semibold text-amber-700 hover:text-amber-600 transition-colors inline-flex items-center gap-1.5 mt-2"
                 >
-                  Truy cập trang : https://giapha-chiho-pham-thanh-giang.vercel.app/
+                  Truy cập trang : https://giapha-chiho-vu-hai-phong.vercel.app
                 </a>
               </p>
             </div>
