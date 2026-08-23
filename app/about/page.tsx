@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowLeft, Info, Mail, ShieldAlert } from "lucide-react";
+import { ArrowLeft, Info, Mail, MapPin, ShieldAlert } from "lucide-react";
 import Link from "next/link";
 
 export default function AboutPage() {
@@ -79,6 +79,30 @@ export default function AboutPage() {
 
                   </li>
                 </ul>
+              </div>
+
+              <div className="mt-8 mb-4 border-t border-stone-100 pt-8 flex items-center gap-3">
+                <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl">
+                  <MapPin className="size-5" />
+                </div>
+                <h2 className="text-xl font-bold text-stone-900">Vị trí chi họ</h2>
+              </div>
+
+              <div className="bg-stone-50 border border-stone-200/60 rounded-2xl p-4 sm:p-6 mb-8">
+                <p className="text-stone-600 text-[14.5px] leading-relaxed mb-4">
+                  <strong className="text-stone-800">Nhà thờ chi họ VŨ</strong> — Khu Xi măng
+                  Thượng Lý, phường Thượng Lý, quận Hồng Bàng, TP Hải Phòng.
+                </p>
+                <div className="rounded-xl overflow-hidden border border-stone-200 shadow-sm">
+                  <iframe
+                    src="https://www.google.com/maps?q=Xi%20m%C4%83ng%20Th%C6%B0%E1%BB%A3ng%20L%C3%BD%2C%20H%E1%BA%A3i%20Ph%C3%B2ng&z=15&output=embed"
+                    title="Google Map - Xi măng Thượng Lý, Hải Phòng"
+                    className="w-full h-[350px] sm:h-[420px] border-0"
+                    loading="lazy"
+                    allowFullScreen
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                </div>
               </div>
 
               <div className="mt-8 mb-4 border-t border-stone-100 pt-8 flex items-center gap-3">
