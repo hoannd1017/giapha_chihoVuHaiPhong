@@ -71,7 +71,7 @@ export default function DataImportExport() {
         const url = URL.createObjectURL(zipBlob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `chihoVuHaiPhong-giapha-export-${new Date().toISOString().split("T")[0]}.zip`;
+        a.download = `chihoPhamThanhGiang-giapha-export-${new Date().toISOString().split("T")[0]}.zip`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -174,6 +174,7 @@ export default function DataImportExport() {
         relationships: payload.relationships,
         person_details_private: payload.person_details_private,
         custom_events: payload.custom_events,
+        tuvi_data: payload.tuvi_data,
       });
 
       if ("error" in result) {

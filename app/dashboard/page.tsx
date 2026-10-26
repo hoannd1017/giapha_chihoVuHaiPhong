@@ -109,6 +109,15 @@ export default async function DashboardLaunchpad() {
       hoverColor: "hover:border-pink-400 hover:shadow-pink-100",
     },
     {
+      title: "Tu Vi Native",
+      description: "Tu Vi native",
+      icon: <Star className="size-8 text-rose-600" />,
+      href: "/tuvi-native",
+      bgColor: "bg-rose-50",
+      borderColor: "border-rose-200/60",
+      hoverColor: "hover:border-rose-400 hover:shadow-rose-100",
+    },
+    {
       title: "Giới thiệu & Liên hệ",
       description: "Thông tin về địa danh",
       icon: <Info className="size-8 text-stone-600" />,
@@ -146,6 +155,15 @@ export default async function DashboardLaunchpad() {
       bgColor: "bg-teal-50",
       borderColor: "border-teal-200/60",
       hoverColor: "hover:border-teal-400 hover:shadow-teal-100",
+    },
+    {
+      title: "Tử Vi Dos",
+      description: "Tử Vi Dos",
+      icon: <Star className="size-8 text-indigo-600" />,
+      href: "/tuvi",
+      bgColor: "bg-indigo-50",
+      borderColor: "border-indigo-200/60",
+      hoverColor: "hover:border-indigo-400 hover:shadow-indigo-100",
     },
   ];
 

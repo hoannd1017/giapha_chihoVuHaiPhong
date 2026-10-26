@@ -62,6 +62,12 @@ interface CustomEventExport {
   created_by: string | null;
 }
 
+interface TuViDataExport {
+  user_id: string;
+  data: string;
+  updated_at?: string;
+}
+
 interface BackupPayload {
   version: number;
   timestamp: string;
@@ -69,6 +75,7 @@ interface BackupPayload {
   relationships: RelationshipExport[];
   person_details_private?: PersonDetailsPrivateExport[];
   custom_events?: CustomEventExport[];
+  tuvi_data?: TuViDataExport[];
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -155,7 +162,7 @@ export async function exportData(
     return allData;
   };
 
-  let allPersons, allRels, allPrivateDetails, allCustomEvents;
+  let allPersons, allRels, allPrivateDetails, allCustomEvents, allTuViData;
 
   try {
     allPersons = await fetchAll(
@@ -179,8 +186,13 @@ export async function exportData(
       "id, name, content, event_date, location, created_by",
       "event_date"
     );
+    allTuViData = await fetchAll(
+      "tuvi_data",
+      "user_id, data, updated_at",
+      "updated_at"
+    );
   } catch (error: any) {
-    return { error: "Lỗi tải dữ liệu: " + error.message };
+    return { error: "Lá»—i táº£i dá»¯ liá»‡u: " + error.message };
   }
 
   let exportPersons = (allPersons ?? []) as PersonExport[];
@@ -249,6 +261,7 @@ export async function exportData(
     relationships: exportRels,
     person_details_private: exportPrivateDetails,
     custom_events: exportCustomEvents,
+    tuvi_data: (allTuViData ?? []) as TuViDataExport[],
   };
 }
 
@@ -262,6 +275,7 @@ export async function importData(
         relationships: Relationship[];
         person_details_private?: PersonDetailsPrivateExport[];
         custom_events?: CustomEventExport[];
+        tuvi_data?: TuViDataExport[];
       },
 ) {
   const isAdmin = await getIsAdmin();
@@ -388,6 +402,26 @@ export async function importData(
   revalidatePath("/dashboard/members");
   revalidatePath("/dashboard/data");
 
+  // 9. Import tuvi_data (if present)
+  let tuViDataCount = 0;
+  const tuViData = importPayload.tuvi_data ?? [];
+  if (tuViData.length > 0) {
+    await supabase
+      .from("tuvi_data")
+      .delete()
+      .neq("user_id", "00000000-0000-0000-0000-000000000000");
+    const CHUNK = 200;
+    for (let i = 0; i < tuViData.length; i += CHUNK) {
+      const chunk = tuViData.slice(i, i + CHUNK);
+      const { error } = await supabase.from("tuvi_data").insert(chunk);
+      if (error)
+        return {
+          error: `Lá»—i khi import tuvi_data (chunk ${i / CHUNK + 1}): ${error.message}`,
+        };
+    }
+    tuViDataCount = tuViData.length;
+  }
+
   return {
     success: true,
     imported: {
@@ -395,6 +429,7 @@ export async function importData(
       relationships: relationships.length,
       person_details_private: privateDetailsCount,
       custom_events: customEventsCount,
+      tuvi_data: tuViDataCount,
     },
   };
 }
