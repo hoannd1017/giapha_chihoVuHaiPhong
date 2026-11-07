@@ -1,44 +1,98 @@
-import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { createClient } from "@/utils/supabase/server";
+import { NextResponse } from "next/server";
+import { getIsAdmin, getSupabase, getUser } from "@/utils/supabase/queries";
 
-export async function GET() {
-  const cookieStore = await cookies();
-  const supabase = createClient(cookieStore);
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+const TABLE = "tuvi_data";
+
+export async function GET(req: Request) {
+  const user = await getUser();
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const { data, error } = await supabase
-    .from("tuvi_data")
-    .select("data")
-    .eq("user_id", user.id)
-    .maybeSingle();
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+
+  const url = new URL(req.url);
+  const targetUserId = url.searchParams.get("user_id");
+
+  const isAdmin = await getIsAdmin();
+  let queryUserId = user.id;
+  if (targetUserId && targetUserId !== user.id) {
+    if (!isAdmin) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+    queryUserId = targetUserId;
   }
-  return NextResponse.json({ data: data?.data ?? null });
+
+  const supabase = await getSupabase();
+  const { data, error } = await supabase
+    .from(TABLE)
+    .select("data, updated_at")
+    .eq("user_id", queryUserId)
+    .maybeSingle();
+
+  if (error) {
+    return NextResponse.json({ data: null, error: error.message }, { status: 200 });
+  }
+
+  return NextResponse.json({ data: data?.data ?? null, updated_at: data?.updated_at ?? null });
 }
 
-export async function POST(req: NextRequest) {
-  const cookieStore = await cookies();
-  const supabase = createClient(cookieStore);
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+export async function POST(req: Request) {
+  const user = await getUser();
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const body = await req.json();
-  const { error } = await supabase.from("tuvi_data").upsert({
-    user_id: user.id,
-    data: body?.data ?? "",
-    updated_at: new Date().toISOString(),
-  });
+
+  let body: { data?: unknown } = {};
+  try {
+    body = await req.json();
+  } catch {
+    body = {};
+  }
+
+  const supabase = await getSupabase();
+  const { error } = await supabase.from(TABLE).upsert(
+    {
+      user_id: user.id,
+      data: body?.data ?? "",
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "user_id" },
+  );
+
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-  return NextResponse.json({ ok: true });
+
+  return NextResponse.json({ success: true });
+}
+
+export async function DELETE(req: Request) {
+  const user = await getUser();
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const isAdmin = await getIsAdmin();
+  if (!isAdmin) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const url = new URL(req.url);
+  const targetUserId = url.searchParams.get("user_id");
+
+  const supabase = await getSupabase();
+  let error;
+  if (targetUserId) {
+    ({ error } = await supabase.from(TABLE).delete().eq("user_id", targetUserId));
+  } else {
+    ({ error } = await supabase
+      .from(TABLE)
+      .delete()
+      .neq("user_id", "00000000-0000-0000-0000-000000000000"));
+  }
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true });
 }

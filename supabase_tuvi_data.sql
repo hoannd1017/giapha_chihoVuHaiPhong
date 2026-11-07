@@ -22,3 +22,13 @@ create policy "tuvi_data_update_own" on public.tuvi_data
 drop policy if exists "tuvi_data_delete_own" on public.tuvi_data;
 create policy "tuvi_data_delete_own" on public.tuvi_data
   for delete using (auth.uid() = user_id);
+
+drop policy if exists "tuvi_data_select_admin" on public.tuvi_data;
+create policy "tuvi_data_select_admin"
+  on public.tuvi_data for select
+  using (exists (select 1 from public.profiles where id = auth.uid() and role = 'admin'));
+
+drop policy if exists "tuvi_data_delete_admin" on public.tuvi_data;
+create policy "tuvi_data_delete_admin"
+  on public.tuvi_data for delete
+  using (exists (select 1 from public.profiles where id = auth.uid() and role = 'admin'));
